@@ -26,3 +26,11 @@ layout builder를 사용해서 원하는 모양 잡기
 mobile에서 헤더 다르게 적용하기
 
     클래스를 따로 지정해서 스타일 적용
+
+Pages and Route
+to 를 사용해서 route
+active는 exact한거만 보여주는?
+
+new tweet form
+:disable="!newQweetContent"
+!important 이거 역할은?

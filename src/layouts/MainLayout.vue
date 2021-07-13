@@ -57,7 +57,7 @@
       <q-list padding separator>
         <q-item class="q-pa-md">
           <q-item-section>
-            <q-item-label overline class="text-gray">Education</q-item-label>
+            <q-item-label overline class="text-grey">Education</q-item-label>
             <q-item-label class="text-weight-bold"
               >Something amazing happened!</q-item-label
             >
@@ -73,7 +73,7 @@
         </q-item>
         <q-item class="q-pa-md">
           <q-item-section>
-            <q-item-label overline class="text-gray">Education</q-item-label>
+            <q-item-label overline class="text-grey">Education</q-item-label>
             <q-item-label class="text-weight-bold"
               >Something amazing happened!</q-item-label
             >
@@ -89,7 +89,7 @@
         </q-item>
         <q-item class="q-pa-md">
           <q-item-section>
-            <q-item-label overline class="text-gray">Education</q-item-label>
+            <q-item-label overline class="text-grey">Education</q-item-label>
             <q-item-label class="text-weight-bold"
               >Something amazing happened!</q-item-label
             >
