@@ -54,7 +54,14 @@
             <q-btn flat round icon="far fa-comment" size="sm" color="grey" />
             <q-btn flat round icon="fas fa-retweet" size="sm" color="grey" />
             <q-btn flat round icon="far fa-heart" size="sm" color="grey" />
-            <q-btn flat round icon="fas fa-trash" size="sm" color="grey" />
+            <q-btn
+              @click="deleteQweet(qweet)"
+              flat
+              round
+              icon="fas fa-trash"
+              size="sm"
+              color="grey"
+            />
           </div>
         </q-item-section>
 
@@ -98,6 +105,12 @@ export default {
         date: Date.now(),
       };
       this.qweets.unshift(newQweet);
+    },
+    deleteQweet(qweet) {
+      console.log("Delete qweet: ", qweet);
+      let dateToDelete = qweet.date;
+      let index = this.qweets.find((qweet) => qweet.date === dateToDelete);
+      this.qweets.splice(index, 1);
     },
   },
 };
