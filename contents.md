@@ -22,3 +22,7 @@ css는 css 커스터마이즈 변수들을
 router route
 
 layout builder를 사용해서 원하는 모양 잡기
+
+mobile에서 헤더 다르게 적용하기
+
+    클래스를 따로 지정해서 스타일 적용
