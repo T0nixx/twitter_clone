@@ -34,3 +34,9 @@ active는 exact한거만 보여주는?
 new tweet form
 :disable="!newQweetContent"
 !important 이거 역할은?
+
+firebase setup
+앱이 켜질때 firebase 연결하기 위해 boot file을 사용
+
+페이지가 백그라운드에서 살아있게해서 훅이 다시 걸리는 것을 방지
+안되는디?

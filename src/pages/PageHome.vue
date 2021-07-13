@@ -1,6 +1,6 @@
 <template>
   <q-page class="relative-position">
-    <q-scroll-area class="absolute fullscreen">
+    <q-scroll-area class="absolute full-width full-height">
       <div class="q-py-lg q-px-md row items-end q-col-gutter-md">
         <div class="col">
           <q-input
@@ -41,11 +41,7 @@
           enter-active-class="animated fadeIn slow"
           leave-active-class="animated fadeOut slow"
         >
-          <q-item
-            v-for="qweet in qweets"
-            :key="qweet.date"
-            class="qweet q-py-md"
-          >
+          <q-item v-for="qweet in qweets" :key="qweet.id" class="qweet q-py-md">
             <q-item-section top avatar>
               <q-avatar>
                 <img src="https://cdn.quasar.dev/img/avatar5.jpg" />
@@ -78,7 +74,14 @@
                   size="sm"
                   color="grey"
                 />
-                <q-btn flat round icon="far fa-heart" size="sm" color="grey" />
+                <q-btn
+                  @click="toggleLiked(qweet)"
+                  flat
+                  round
+                  :icon="qweet.liked ? 'fas fa-heart' : 'far fa-heart'"
+                  :color="qweet.liked ? 'pink' : 'grey'"
+                  size="sm"
+                />
                 <q-btn
                   @click="deleteQweet(qweet)"
                   flat
@@ -97,6 +100,7 @@
 </template>
 
 <script>
+import db from "src/boot/firebase";
 import { formatDistance } from "date-fns";
 
 export default {
@@ -105,16 +109,20 @@ export default {
     return {
       newQweetContent: "",
       qweets: [
-        {
-          content:
-            "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Provident aperiam soluta sit harum odit nisi similique officiis, nostrum consequuntur. Fugit consectetur molestiae libero eveniet nesciunt delectus tempora quisquam atque distinctio?",
-          date: 1626151208787,
-        },
-        {
-          content:
-            "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Provident aperiam soluta sit harum odit nisi similique officiis, nostrum consequuntur. Fugit consectetur molestiae libero eveniet nesciunt delectus tempora quisquam atque distinctio?",
-          date: 1626151231131,
-        },
+        // {
+        //   id: "id1",
+        //   liked: true,
+        //   content:
+        //     "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Provident aperiam soluta sit harum odit nisi similique officiis, nostrum consequuntur. Fugit consectetur molestiae libero eveniet nesciunt delectus tempora quisquam atque distinctio?",
+        //   date: 1626151208787,
+        // },
+        // {
+        //   id: "id2",
+        //   liked: false,
+        //   content:
+        //     "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Provident aperiam soluta sit harum odit nisi similique officiis, nostrum consequuntur. Fugit consectetur molestiae libero eveniet nesciunt delectus tempora quisquam atque distinctio?",
+        //   date: 1626151231131,
+        // },
       ],
     };
   },
@@ -126,15 +134,75 @@ export default {
       let newQweet = {
         content: this.newQweetContent,
         date: Date.now(),
+        liked: false,
       };
-      this.qweets.unshift(newQweet);
+      // this.qweets.unshift(newQweet);
+      db.collection("qweets")
+        .add(newQweet)
+        .then((docRef) => {
+          console.log("Document written with ID: ", docRef.id);
+        })
+        .catch((error) => {
+          console.error("Error adding document: ", error);
+        });
       this.newQweetContent = "";
     },
     deleteQweet(qweet) {
-      let dateToDelete = qweet.date;
-      let index = this.qweets.findIndex((qweet) => qweet.date === dateToDelete);
-      this.qweets.splice(index, 1);
+      let idToDelete = qweet.id;
+      let index = this.qweets.findIndex((qweet) => qweet.id === idToDelete);
+      db.collection("qweets")
+        .doc(qweet.id)
+        .delete()
+        .then(() => {
+          console.log("Document successfully deleted!");
+        })
+        .catch((error) => {
+          console.error("Error removing document: ", error);
+        });
+      // this.qweets.splice(index, 1);
     },
+    toggleLiked(qweet) {
+      db.collection("qweets")
+        .doc(qweet.id)
+        .update({
+          liked: !qweet.liked,
+        })
+        .then(() => {
+          console.log("Document successfully updated!");
+        })
+        .catch((error) => {
+          // The document probably doesn't exist.
+          console.error("Error updating document: ", error);
+        });
+    },
+  },
+  mounted() {
+    db.collection("qweets")
+      .orderBy("date")
+      .onSnapshot((snapshot) => {
+        snapshot.docChanges().forEach((change) => {
+          let qweetChange = { ...change.doc.data(), id: change.doc.id };
+
+          if (change.type === "added") {
+            console.log("New city: ", qweetChange);
+            this.qweets.unshift(qweetChange);
+          }
+          if (change.type === "modified") {
+            console.log("Modified city: ", qweetChange);
+            let index = this.qweets.findIndex(
+              (qweet) => qweet.id === qweetChange.id
+            );
+            Object.assign(this.qweets[index], qweetChange);
+          }
+          if (change.type === "removed") {
+            console.log("Removed city: ", qweetChange);
+            let index = this.qweets.findIndex(
+              (qweet) => qweet.id === qweetChange.id
+            );
+            this.qweets.splice(index, 1);
+          }
+        });
+      });
   },
 };
 </script>
